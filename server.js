@@ -20,9 +20,39 @@ const db = mysql.createConnection(
     console.log('Connected to the tracker database.')
 );
 
-db.query(`SELECT * FROM employee`, (err, rows) => {
-    console.log(rows);
+//GET a single employee
+// db.query(`SELECT * FROM employee WHERE id = 1`, (err, row) => {
+//     if(err) {
+//         console.log(err);
+//     }
+//     console.log(row);
+// });
+
+//SELECTS THE WHOLE TABLE OF EMPLOYEE
+// db.query(`SELECT * FROM employee`, (err, rows) => {
+//     console.log(rows);
+// });
+
+//Delete an employee
+// db.query(`DELETE FROM employee WHERE id = ?`, 6, (err,result) => {
+//     if(err) {
+//         console.log(err);
+//     }
+//     console.log(result);
+// });
+
+//CREATE AN EMPLOYEE
+const sql = `INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
+            VALUES (?,?,?,?,?)`;
+const params = [6, 'Ronald', 'Smith', 1, 2];
+
+db.query(sql, params, (err,result) => {
+    if(err) {
+        console.log(err);
+    }
+    console.log(result);
 });
+
 
 
 //Default response for any other request (Not Found)
