@@ -27,24 +27,24 @@ const db = mysql.createConnection(
 
 
 //GET a single employee
-db.query(`SELECT * FROM employee WHERE id = 1`, (err, row) => {
-    if(err) {
-        console.log(err);
-    }
-    else if(dataBase.name === 'View ALL Employees'){
-            console.table(row);
-    }
-});
+// db.query(`SELECT * FROM employee WHERE id = 1`, (err, row) => {
+//     if(err) {
+//         console.log(err);
+//     }
+//     else if(dataBase.name === 'View ALL Employees'){
+//             console.table(row);
+//     }
+// });
 
 //SELECTS THE WHOLE TABLE OF EMPLOYEE
-// db.query(`SELECT * FROM employee`, (err, rows) => {
-// // console.log(rows);
-// if(dataBase.name === 'View ALL Employees'){
-//     console.log(rows);
-// }
+db.query(`SELECT * FROM employee`, (err, rows) => {
+// console.log(rows);
+if(dataBase.name === 'View ALL Employees'){
+    console.table(rows);
+}
 
 
-// });
+});
 
 // db.query(`SELECT * FROM employee`, (err, rows) => {
 //     // console.log(rows);
