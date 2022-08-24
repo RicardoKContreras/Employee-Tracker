@@ -104,15 +104,14 @@ if(dataBase.question1 === 'Add Role'){
         ]).then(Response => {
             var string = 'SELECT id FROM department WHERE name = ' + ' "' + Response.RoleDepartment + '" ';
             db.query(string, (err, res) => {
-                console.log(res[0]);
-                const params = [Response.newRole, res[0], Response.salary];
+                const params = [Response.newRole, res[0].id, Response.salary];
                 const sql = `INSERT INTO roles (title, department_id, salary)
                 VALUES (?,?,?)`;
                 db.query(sql, params, (err,result) => {
                     if(err) {
                         console.log(err);
                     }
-                    console.log(Response.newDepartment + ' Department has been added!');
+                    console.log(Response.newRole + ' role has been added!');
                 });
             })
             
@@ -133,6 +132,7 @@ if(dataBase.question1 === 'Add Role'){
 
 //ADD A DEPARTMENT
 if(dataBase.question1 === 'Add Department'){
+    
     return inquirer.prompt([
         {
             type: 'input',
@@ -174,90 +174,77 @@ if(dataBase.question1 === 'Add Department'){
 
 //CREATE AN EMPLOYEE
     if(dataBase.question1 === 'Add Employee'){
-        const init2 = () => {
-        return inquirer.prompt([
-            {
-                type: 'input',
-                name: 'firstname',
-                message: 'What is the employees first name?',
-                validate: exampleInput => {
-                    if (exampleInput) {
-                        return true;
-                    }
-                    else {
-                        console.log('Please give a first name');
-                        return false;
-                    }
-                }
-              },
-              {
-                type: 'input',
-                name: 'lastname',
-                message: 'What is the employees last name?',
-                validate: exampleInpue => {
-                    if (exampleInpue) {
-                        return true;
-                    }
-                    else {
-                        console.log('Please give a last name');
-                        return false;
-                    }
-                }
-              },
+        db.query(`SELECT title FROM roles`, (err, resp) => {
+            const roleChoice = resp;
+            // console.log(roleChoice);
+            // console.log(resp);
+            
+         return inquirer.prompt([
+        //     {
+        //         type: 'input',
+        //         name: 'firstname',
+        //         message: 'What is the employees first name?',
+        //         validate: exampleInput => {
+        //             if (exampleInput) {
+        //                 return true;
+        //             }
+        //             else {
+        //                 console.log('Please give a first name');
+        //                 return false;
+        //             }
+        //         }
+        //       },
+        //       {
+        //         type: 'input',
+        //         name: 'lastname',
+        //         message: 'What is the employees last name?',
+        //         validate: exampleInpue => {
+        //             if (exampleInpue) {
+        //                 return true;
+        //             }
+        //             else {
+        //                 console.log('Please give a last name');
+        //                 return false;
+        //             }
+        //         }
+        //       },
               {
                 type: 'list',
-          name: 'Role',
-          message: 'What is the employees role? ',
-          choices: ['Cook','Cook Manager', 'Store manager']
+                name: 'Role',
+                message: 'What is the employees role?',
+                choices: roleChoice
               }
-        ]);
-        
-    }
-    init2()
-    .then(response => {
-        if(response.Role === 'Cook'){
+         ])
+        })
+    //.then(response => {
+    //         var string = 'SELECT id FROM department WHERE name = ' + ' "' + Response.RoleDepartment + '" ';
+    //         db.query(string, (err, res) => {
+    //             const params = [Response.newRole, res[0].id, Response.salary];
+    //             const sql = `INSERT INTO roles (title, department_id, salary)
+    //             VALUES (?,?,?)`;
+    //             db.query(sql, params, (err,result) => {
+    //                 if(err) {
+    //                     console.log(err);
+    //                 }
+    //                 console.log(Response.newRole + ' role has been added!');
+    //             });
+    //         })
             
-            const params = [ response.firstname, response.lastname, 1, 2];
-            const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
-            VALUES (?,?,?,?)`;
-            db.query(sql, params, (err,result) => {
-                if(err) {
-                    console.log(err);
-                }
-                console.log(result);
-            });
+    //     //     const params = [ response.firstname, response.lastname, 1, 2];
+    //     //     const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
+    //     //     VALUES (?,?,?,?)`;
+    //     //     db.query(sql, params, (err,result) => {
+    //     //         if(err) {
+    //     //             console.log(err);
+    //     //         }
+    //     //         console.log(result);
+    //     //     });
        
-        }
-        else if(response.Role === 'Cook Manager'){
-            const params = [ response.firstname, response.lastname, 2, 2];
-            const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
-            VALUES (?,?,?,?)`;
-            db.query(sql, params, (err,result) => {
-                if(err) {
-                    console.log(err);
-                }
-                console.log(result);
-            });
-        }
-        else if(response.Role === 'Store Manager'){
-            const params = [ response.firstname, response.lastname, 3, 3];
-            const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
-            VALUES (?,?,?,?)`;
-            db.query(sql, params, (err,result) => {
-                if(err) {
-                    console.log(err);
-                }
-                console.log(result);
-            });
-        }
-        
-        
-        
-      })
+    //     // }     
 }
     
-
-
 }
+
+
 
 
