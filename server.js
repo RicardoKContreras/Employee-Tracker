@@ -175,76 +175,75 @@ if(dataBase.question1 === 'Add Department'){
 //CREATE AN EMPLOYEE
     if(dataBase.question1 === 'Add Employee'){
         db.query(`SELECT title FROM roles`, (err, resp) => {
-            const roleChoice = resp;
+            var roleArray = [];
+            for(var i = 0; i < resp.length; i++){
+                   roleArray.push(resp[i].title)
+                 
+                // console.log(resp);
+                //   console.log([resp[i].title]);
+                //  console.log(one);
+                
+            }
+            // console.log(one);
+            // console.log(resp.length);
+            // const roleChoice = resp;
             // console.log(roleChoice);
             // console.log(resp);
             
          return inquirer.prompt([
-        //     {
-        //         type: 'input',
-        //         name: 'firstname',
-        //         message: 'What is the employees first name?',
-        //         validate: exampleInput => {
-        //             if (exampleInput) {
-        //                 return true;
-        //             }
-        //             else {
-        //                 console.log('Please give a first name');
-        //                 return false;
-        //             }
-        //         }
-        //       },
-        //       {
-        //         type: 'input',
-        //         name: 'lastname',
-        //         message: 'What is the employees last name?',
-        //         validate: exampleInpue => {
-        //             if (exampleInpue) {
-        //                 return true;
-        //             }
-        //             else {
-        //                 console.log('Please give a last name');
-        //                 return false;
-        //             }
-        //         }
-        //       },
+            {
+                type: 'input',
+                name: 'firstname',
+                message: 'What is the employees first name?',
+                validate: exampleInput => {
+                    if (exampleInput) {
+                        return true;
+                    }
+                    else {
+                        console.log('Please give a first name');
+                        return false;
+                    }
+                }
+              },
+              {
+                type: 'input',
+                name: 'lastname',
+                message: 'What is the employees last name?',
+                validate: exampleInpue => {
+                    if (exampleInpue) {
+                        return true;
+                    }
+                    else {
+                        console.log('Please give a last name');
+                        return false;
+                    }
+                }
+              },
               {
                 type: 'list',
                 name: 'Role',
                 message: 'What is the employees role?',
-                choices: roleChoice
+                choices: roleArray
               }
          ])
-        })
-    //.then(response => {
-    //         var string = 'SELECT id FROM department WHERE name = ' + ' "' + Response.RoleDepartment + '" ';
-    //         db.query(string, (err, res) => {
-    //             const params = [Response.newRole, res[0].id, Response.salary];
-    //             const sql = `INSERT INTO roles (title, department_id, salary)
-    //             VALUES (?,?,?)`;
-    //             db.query(sql, params, (err,result) => {
-    //                 if(err) {
-    //                     console.log(err);
-    //                 }
-    //                 console.log(Response.newRole + ' role has been added!');
-    //             });
-    //         })
-            
-    //     //     const params = [ response.firstname, response.lastname, 1, 2];
-    //     //     const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
-    //     //     VALUES (?,?,?,?)`;
-    //     //     db.query(sql, params, (err,result) => {
-    //     //         if(err) {
-    //     //             console.log(err);
-    //     //         }
-    //     //         console.log(result);
-    //     //     });
        
-    //     // }     
+    .then(response => {
+            var string = 'SELECT id FROM roles WHERE title = ' + ' "' + response.Role + '" ';
+            db.query(string, (err, res) => {
+                const params = [ response.firstname, response.lastname, res[0].id, 2];
+             const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
+                VALUES (?,?,?,?)`;
+                db.query(sql, params, (err,result) => {
+                    if(err) {
+                        console.log(err);
+                    }
+                    console.log(response.firstname + ' Employee has been added!');
+                });
+            })
+})
+}) 
 }
-    
+
+
+
 }
-
-
-
-
