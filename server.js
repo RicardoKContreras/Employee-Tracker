@@ -1,8 +1,12 @@
+const { response } = require('express');
+
 module.exports = dataBase => {
 const express = require('express');
-const PORT = process.env.PORT || 3002;
+const inquirer = require('inquirer');
 const app = express();
 const mysql = require('mysql2');
+const cTable = require('console.table');
+
 
 //Express Middleware
 app.use(express.urlencoded({extended: false}));
@@ -23,7 +27,11 @@ const db = mysql.createConnection(
     },
     console.log('Connected to the tracker database.')
 );
-// console.log(dataBase);
+
+//Default response for any other request (Not Found)
+app.use((req, res) => {
+    res.status(404).end();
+});
 
 
 //GET a single employee
@@ -37,23 +45,124 @@ const db = mysql.createConnection(
 // });
 
 //SELECTS THE WHOLE TABLE OF EMPLOYEE
-db.query(`SELECT * FROM employee`, (err, rows) => {
+db.query(`SELECT employee.id, employee.first_name, employee.last_name, roles.title AS title FROM employee LEFT JOIN roles ON employee.role_id = roles.id`, (err, rows) => {
 // console.log(rows);
-if(dataBase.name === 'View ALL Employees'){
+if(dataBase.question1 === 'View ALL Employees'){
     console.table(rows);
 }
+ });
 
 
-});
+//SELECTS WHOLE TABLE OF ROLES
+ db.query(`SELECT roles.id, roles.salary, roles.title, department.name AS department FROM roles LEFT JOIN department ON roles.department_id = department.id`, (err, res) => {
+    // console.log(rows);
+    if(dataBase.question1 === 'View All Roles'){
+        console.table(res);
+    }
+     });
 
-// db.query(`SELECT * FROM employee`, (err, rows) => {
-//     // console.log(rows);
-//     if(dataBase.name === 'View ALL Employees'){
-//         console.log(rows);
-//     }
+//ADD A NEW ROLE
+if(dataBase.question1 === 'Add Role'){
+    db.query(`SELECT name FROM department`, (err, res) => {
+    const choices = res;
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newRole',
+            message: 'What is the name of the role?',
+            validate: roleInput => {
+                if (roleInput) {
+                    return true;
+                }
+                else {
+                    console.log('Please give a role name!');
+                    return false;
+                }
+            }
+          },
+          {
+            type: 'input',
+            name: 'salary',
+            message: 'What is the salary of the role?',
+            validate: salaryInput => {
+                if (salaryInput > 10000) {
+                    return true;
+                }
+                else if(salaryInput < 10000){
+                    console.log('Please give a salary over 10000');
+                    return false;
+                }
+            }
+          },
+          {
+            type: 'list',
+            name: 'RoleDepartment',
+            message: 'Which department does the role belong to?',
+            choices: choices
+            
+          }
+        ]).then(Response => {
+            var string = 'SELECT id FROM department WHERE name = ' + ' "' + Response.RoleDepartment + '" ';
+            db.query(string, (err, res) => {
+                console.log(res[0]);
+                const params = [Response.newRole, res[0], Response.salary];
+                const sql = `INSERT INTO roles (title, department_id, salary)
+                VALUES (?,?,?)`;
+                db.query(sql, params, (err,result) => {
+                    if(err) {
+                        console.log(err);
+                    }
+                    console.log(Response.newDepartment + ' Department has been added!');
+                });
+            })
+            
+        })
+    });
+}    
+
+
+//SELECT WHOLE DEPARTMENT TABLE
+     db.query(`SELECT * FROM department`, (err, res) => {
+        // console.log(rows);
+        if(dataBase.question1 === 'View All Departments'){
+            console.table(res);
+            
+        }
+         });
+
+
+//ADD A DEPARTMENT
+if(dataBase.question1 === 'Add Department'){
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDepartment',
+            message: 'What is the name of the department?',
+            validate: departmentInput => {
+                if (departmentInput) {
+                    return true;
+                }
+                else {
+                    console.log('Please give a department name!');
+                    return false;
+                }
+            }
+          }
+        ])
+        .then(Response => {
+            const params = [Response.newDepartment];
+            const sql = `INSERT INTO department (name)
+            VALUES (?)`;
+            db.query(sql, params, (err,result) => {
+                if(err) {
+                    console.log(err);
+                }
+                console.log(Response.newDepartment + ' Department has been added!');
+            });
+        })
     
-    
-//     });
+}
+
 
 //Delete an employee
 // db.query(`DELETE FROM employee WHERE id = ?`, 6, (err,result) => {
@@ -64,34 +173,91 @@ if(dataBase.name === 'View ALL Employees'){
 // });
 
 //CREATE AN EMPLOYEE
-// const sql = `INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
-//             VALUES (?,?,?,?,?)`;
-// const params = [6, 'Ronald', 'Smith', 1, 2];
+    if(dataBase.question1 === 'Add Employee'){
+        const init2 = () => {
+        return inquirer.prompt([
+            {
+                type: 'input',
+                name: 'firstname',
+                message: 'What is the employees first name?',
+                validate: exampleInput => {
+                    if (exampleInput) {
+                        return true;
+                    }
+                    else {
+                        console.log('Please give a first name');
+                        return false;
+                    }
+                }
+              },
+              {
+                type: 'input',
+                name: 'lastname',
+                message: 'What is the employees last name?',
+                validate: exampleInpue => {
+                    if (exampleInpue) {
+                        return true;
+                    }
+                    else {
+                        console.log('Please give a last name');
+                        return false;
+                    }
+                }
+              },
+              {
+                type: 'list',
+          name: 'Role',
+          message: 'What is the employees role? ',
+          choices: ['Cook','Cook Manager', 'Store manager']
+              }
+        ]);
+        
+    }
+    init2()
+    .then(response => {
+        if(response.Role === 'Cook'){
+            
+            const params = [ response.firstname, response.lastname, 1, 2];
+            const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
+            VALUES (?,?,?,?)`;
+            db.query(sql, params, (err,result) => {
+                if(err) {
+                    console.log(err);
+                }
+                console.log(result);
+            });
+       
+        }
+        else if(response.Role === 'Cook Manager'){
+            const params = [ response.firstname, response.lastname, 2, 2];
+            const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
+            VALUES (?,?,?,?)`;
+            db.query(sql, params, (err,result) => {
+                if(err) {
+                    console.log(err);
+                }
+                console.log(result);
+            });
+        }
+        else if(response.Role === 'Store Manager'){
+            const params = [ response.firstname, response.lastname, 3, 3];
+            const sql = `INSERT INTO employee ( first_name, last_name, role_id, manager_id)
+            VALUES (?,?,?,?)`;
+            db.query(sql, params, (err,result) => {
+                if(err) {
+                    console.log(err);
+                }
+                console.log(result);
+            });
+        }
+        
+        
+        
+      })
+}
+    
 
-// db.query(sql, params, (err,result) => {
-//     if(err) {
-//         console.log(err);
-//     }
-//     console.log(result);
-// });
-
-
-
-//Default response for any other request (Not Found)
-app.use((req, res) => {
-    res.status(404).end();
-});
-
-
-
-
-
-
-
-
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
 
 }
+
+

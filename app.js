@@ -5,18 +5,10 @@ const init = () => {
     return inquirer.prompt([
         {
           type: 'list',
-          name: 'name',
+          name: 'question1',
           message: 'What Would you like to do?',
-          choices: ['View ALL Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department'],
-          validate: titleInput => {
-              if (titleInput) {
-                  return true;
-              }
-              else {
-                  console.log('Please provide a title for your project!');
-                  return false;
-              }
-          }
+          choices: ['View ALL Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
+          
         }
     ]);
     };
@@ -27,4 +19,64 @@ const init = () => {
         //  console.log(server);
         //  console.log(init);
         //  console.log(dataBase);
-    });
+    })
+
+    // .then(async () => {
+    //          const inputs = await init();
+            
+           
+    //     console.log(inputs);
+    //     });
+        // main();)
+
+    //  const init3 = async (inputs = []) => {
+    //     // const prompts = [
+    //     //     {
+    //     //         type: 'list',
+    //     //         name: 'question1',
+    //     //         message: 'What Would you like to do?',
+    //     //         choices: ['View ALL Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
+    //     //       }
+    //     // ];
+    //     // const {question1, ...answers} = await inquirer.prompt(init);
+    //     // const NewInputs = [...inputs, answers];
+    //     // return question1 ? init3(NewInputs): NewInputs;
+    // };
+    
+    // const main = async () => {
+    //     const inputs = await inputs;
+        
+       
+    //     // console.log(inputs);
+    // };
+    // main();
+    
+    
+    // return inquirer.prompt([
+    //     {
+    //       type: 'list',
+    //       name: 'name',
+    //       message: 'What Would you like to do?',
+    //       choices: ['View ALL Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
+    //     }
+    // ]);  
+    // };
+    //  init()
+    // .then(res => {
+          
+    // });
+
+
+    
+        
+    
+   
+    
+
+
+            
+        
+    
+
+    
+    
