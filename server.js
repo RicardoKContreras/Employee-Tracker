@@ -26,7 +26,7 @@ const db = mysql.createConnection(
         password: 'BootCamp217!',
         database: 'tracker'
     },
-    console.log('Connected to the tracker database.')
+    
 );
 
 //Default response for any other request (Not Found)
