@@ -45,7 +45,7 @@ app.use((req, res) => {
 // });
 
 //SELECTS THE WHOLE TABLE OF EMPLOYEE
-db.query(`SELECT employee.id, employee.first_name, employee.last_name, roles.title AS title FROM employee LEFT JOIN roles ON employee.role_id = roles.id`, (err, rows) => {
+db.query(`SELECT employee.id, employee.first_name, employee.last_name, roles.title AS title, roles.salary AS salary, roles.department_id AS department FROM employee LEFT JOIN roles ON employee.role_id = roles.id`, (err, rows) => {
 // console.log(rows);
 if(dataBase.question1 === 'View ALL Employees'){
     console.table(rows);
@@ -244,6 +244,57 @@ if(dataBase.question1 === 'Add Department'){
 }) 
 }
 
-
-
+if(dataBase.question1 === 'Update Employee Role'){
+    db.query(`SELECT first_name, last_name FROM employee`, (err, resp) => {
+    db.query(`SELECT roles.title FROM roles`, (err, role) => {
+        // console.log(role);
+        var arrayRole = [];
+        for(var i = 0; i < role.length; i++){
+               arrayRole.push(role[i].title);
+        }
+        var nameArray = [];
+        for(var i = 0; i < resp.length; i++){
+               nameArray.push(resp[i].first_name + ' ' + resp[i].last_name);
+        }
+    return inquirer.prompt([
+        {
+            type: 'list',
+            name: 'employeeRoleUpdate',
+            message: 'Which employees role do you want to update?',
+            choices: nameArray
+          },
+          {
+            type: 'list',
+            name: 'UpdatedRole',
+            message: 'Which role do you want assign the selcted employee?',
+            choices: arrayRole 
+          }
+          ]).then(response => {
+            
+            const updateRole = 'SELECT id FROM roles WHERE title = ' + ' "' + response.UpdatedRole + '" ';  
+            // const string = 'SELECT id, first_name FROM employee WHERE id = 1 AND first_name = ' + "'Tiffany'";
+            const string ='SELECT first_name, last_name FROM employee WHERE first_name AND last_name = ' + "'" + response.employeeRoleUpdate.split(' ' + '"' + ' " ') + "'";
+            const data1 = [response.employeeRoleUpdate];
+            console.log(string);
+             console.log(data1);
+            db.query(string, (err, res) => {
+                console.log(res);
+                // const sql = `UPDATE employee SET role_id = ? WHERE first_name AND last_name = ?`;
+                // const data = [res[0].id, response.employeeRoleUpdate];
+                // console.log(res[0].id);
+                // console.log(res);
+            //  console.log(sql);
+                // db.query( sql, data, (err,result) => {
+                //     if(err) {
+                //         console.log(err);
+                //     }
+                //     // console.log(response.firstname + ' Employee has been added!');
+                //      console.log(result);
+                //     // console.log(response.UpdatedRole.id);
+                // });
+            })
+})
+        })
+    })
+    }
 }
